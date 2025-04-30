@@ -16,15 +16,14 @@ const App = () => {
   console.log("Weather error:", error);
 
   return (
-    <div className='bg-yellow-100'>
-      {/* <QuestionPage></QuestionPage> */}
+    <div className=''>
       <div className="p-10 inter-400">
         <p className="text-2xl font-semibold my-1">Chittagong, Bangladesh</p>
         <p className="text-lg">30 April, 2025</p>
         <input type="text" className="my-5 px-3 w-full h-10 border-2 border-gray-600 rounded-3xl" />
 
         {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
         {data && (
           <div className="flex flex-col justify-between items-center my-10">

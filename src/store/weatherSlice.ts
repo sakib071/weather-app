@@ -18,7 +18,8 @@ export const fetchWeather = createAsyncThunk(
   async ({ lat, lon }: { lat: number; lon: number }) => {
     const API_KEY = `c98d53c6917a4fdd8f899a3ba3d34393`;
     const response = await axios.get(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+      // `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid=${API_KEY}`
     );
     return response.data;
   }
