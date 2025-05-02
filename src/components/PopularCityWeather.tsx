@@ -67,7 +67,7 @@ export default function PopularCityWeather({ }: Props) {
             <img
               src={getWeatherIcon(city.temperature)}
               alt="weather"
-              className="mt-3 size-12"
+              className="mt-3 w-12 h-auto background-contain"
             />
 
 

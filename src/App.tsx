@@ -5,6 +5,7 @@ import { fetchWeather } from './store/weatherSlice';
 // import CloudImage from "../public/clouds.png";
 import PopularCityWeather from './components/PopularCityWeather';
 import React from 'react';
+import { OrbitProgress } from 'react-loading-indicators';
 
 
 const App = () => {
@@ -98,19 +99,17 @@ const App = () => {
           </span>
         </div>
 
-        {loading && <p>Loading...</p>}
+        {loading && <p className='w-full h-96 flex justify-center items-center text-center'><OrbitProgress color="#282727" size="medium" text="" textColor="" /></p>}
         {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
-        {data && (
-          <div className="w-full flex flex-col justify-between items-center my-5">
+        {loading || data && (
+          <div className="w-full h-96 flex flex-col justify-between items-center my-5">
             <div className="flex flex-col items-center">
               <img
                 src={getWeatherIcon(data?.current?.temperature_2m)}
                 alt="weather"
                 className="mt-3 size-24"
               />
-
-
               <p className="text-5xl font-semibold ml-3 my-5">
                 {Math.round(data?.current?.temperature_2m)}°
               </p>
@@ -126,7 +125,7 @@ const App = () => {
 
             <div className="h-24 text-center grid grid-cols-3 items-center gap-10 my-5 rounded-3xl p-3 bg-sky-50">
               <div className='flex flex-col items-center'>
-                <p className='text-sm font-bold'>Humidity</p>
+                <p className='text-xs sm:text-sm font-bold'>Humidity</p>
                 <p className='text-sm'>{data?.current?.relative_humidity_2m}%</p>
               </div>
               <div className='flex flex-col items-center'>
