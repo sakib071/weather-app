@@ -2,19 +2,17 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from './hooks/hooks';
 import { fetchWeather } from './store/weatherSlice';
-import CloudImage from "../public/clouds.png";
+// import CloudImage from "../public/clouds.png";
+import PopularCityWeather from './components/PopularCityWeather';
+import React from 'react';
 
-//https://geocoding-api.open-meteo.com/v1/search?name=Chittagong
 
 const App = () => {
   const dispatch = useAppDispatch();
   const { data, loading, error } = useAppSelector((state) => state?.weather);
   const [city, setCity] = useState('');
-  const [cityName, setCityName] = useState('');
+  const [cityName, setCityName] = useState<{ name: string; country: string }>({ name: '', country: '' });
   const rainNow = data?.hourly?.rain?.[data?.hourly?.time.indexOf(data?.current?.time)];
-  const currentTime = data?.current?.time;
-  const humidityIndex = data?.hourly?.time?.indexOf(currentTime);
-  const humidity = data?.hourly?.relative_humidity_2m?.[humidityIndex];
   const today = new Date().toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
@@ -26,6 +24,12 @@ const App = () => {
     dispatch(fetchWeather({ lat: 22.3569, lon: 91.7832 }));
     setCityName({ name: 'Chittagong', country: 'Bangladesh' });
   }, [dispatch]);
+
+  const getWeatherIcon = (temperature: number) => {
+    if (temperature >= 30) return "/sun.png";          // Hot
+    if (temperature >= 20 && temperature < 30) return "/clouds.png"; // Mild
+    return "/heavyRain.png";                          // Cool or rainy-looking fallback
+  };
 
   const handleSearch = async () => {
     if (!city) return;
@@ -47,6 +51,7 @@ const App = () => {
       console.error("Geocoding error:", err);
     }
   };
+
 
   // console.log("Weather loading:", loading);
   console.log("Weather data:", data);
@@ -99,7 +104,13 @@ const App = () => {
         {data && (
           <div className="w-full flex flex-col justify-between items-center my-5">
             <div className="flex flex-col items-center">
-              <img src={CloudImage} alt="weather" className="size-28" />
+              <img
+                src={getWeatherIcon(data?.current?.temperature_2m)}
+                alt="weather"
+                className="mt-3 size-24"
+              />
+
+
               <p className="text-5xl font-semibold ml-3 my-5">
                 {Math.round(data?.current?.temperature_2m)}°
               </p>
@@ -124,25 +135,13 @@ const App = () => {
               </div>
               <div className='flex flex-col items-center'>
                 <p className='text-sm font-bold'>Rain</p>
-                <p>{rainNow > 0 ? "Yes" : "No"}</p>
+                <p className='text-sm'>{rainNow > 0 ? "Yes" : "No"}</p>
               </div>
             </div>
           </div>
         )}
 
-
-        <div>
-          <p className='text-lg font-semibold my-5'>Popular Cities</p>
-          <div className='flex gap-5'>
-            <div className="flex flex-col items-center p-5 rounded-3xl bg-sky-50">
-              <p className="text-lg font-semibold">Dhaka</p>
-              <p className="text-sm">30 April, 2025</p>
-              <img src={CloudImage} alt="weather" className="mt-3 size-12" />
-              <p className="text-3xl font-semibold ml-3 mt-3">{Math?.round(data?.current?.temperature_2m)}°</p>
-            </div>
-
-          </div>
-        </div>
+        <PopularCityWeather />
       </div>
     </div>
   );

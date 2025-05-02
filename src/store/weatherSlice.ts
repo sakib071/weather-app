@@ -16,7 +16,7 @@ const initialState: WeatherState = {
 export const fetchWeather = createAsyncThunk(
   'weather/fetchWeather',
   async ({ lat, lon }: { lat: number; lon: number }) => {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset&hourly=temperature_2m,relative_humidity_2m,rain&current=temperature_2m,wind_speed_10m&timezone=Asia%2FSingapore`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&hourly=relative_humidity_2m,rain`;
     const response = await axios.get(url);
     return response.data;
   }
