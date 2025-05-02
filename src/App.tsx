@@ -15,6 +15,8 @@ const App = () => {
   const [cityName, setCityName] = useState<{ name: string; country: string }>({ name: '', country: '' });
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   const rainNow = data?.hourly?.rain?.[data?.hourly?.time.indexOf(data?.current?.time)];
   const today = new Date().toLocaleDateString("en-US", {
     day: "numeric",
@@ -70,6 +72,26 @@ const App = () => {
     }
   };
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('weatherAppTheme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('weatherAppTheme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('weatherAppTheme', 'light');
+    }
+  };
+
 
   // console.log("Weather loading:", loading);
   console.log("Weather data:", data);
@@ -77,20 +99,23 @@ const App = () => {
 
   return (
     <div className=''>
-      <div className="px-8 py-6 inter-400">
-        <p className="text-xl font-semibold my-1">{`${cityName.name}, ${cityName.country}`}</p>
-        <p className="text-base">{today}</p>
+      <div className="px-8 py-6 inter-400 bg-white text-black dark:bg-gray-900 dark:text-white max-w-md mx-auto min-h-screen transition-colors">
+        <div>
+          <div className='flex justify-between items-start'>
+            <p className="text-xl font-semibold my-1">{`${cityName.name}, ${cityName.country}`}</p>
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={toggleDarkMode}
+                className="px-3 py-1 text-sm rounded-full border border-gray-400 dark:border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+              </button>
+            </div>
+          </div>
+          <p className="text-base">{today}</p>
+        </div>
 
         <div className="relative my-5">
-          {/* <input
-            type="text"
-            id="Search"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Search city"
-            className="mt-0.5 px-3 w-full text-sm text-gray-600 border-gray-300 h-10 border-2 rounded-3xl shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900"
-          /> */}
-
           <input
             type="text"
             id="Search"
@@ -99,9 +124,8 @@ const App = () => {
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setTimeout(() => setIsInputFocused(false), 100)} // delay to allow button click
             placeholder="Search city"
-            className="mt-0.5 px-3 w-full text-sm text-gray-600 border-gray-300 h-10 border-2 rounded-3xl shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900"
+            className="px-4 w-full text-sm bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-300 h-10 border-2 rounded-3xl shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900"
           />
-
 
           <span className="absolute inset-y-0 right-2 grid w-8 place-content-center">
             <button
@@ -130,7 +154,7 @@ const App = () => {
 
         <div className='flex flex-col items-center'>
           {isInputFocused && searchHistory.length > 0 && (
-            <div className="absolute z-10 bg-white border border-gray-200 rounded-xl shadow-md -mt-3  mx-auto w-full max-w-[340px]">
+            <div className="absolute z-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-md -mt-3  mx-auto w-full max-w-[340px]">
               {searchHistory.map((item, idx) => (
                 <button
                   key={idx}
@@ -149,11 +173,11 @@ const App = () => {
         </div>
 
 
-        {loading && <p className='w-full h-80 flex justify-center items-center text-center'><OrbitProgress color="#282727" size="medium" text="" textColor="" /></p>}
+        {loading && <p className='w-full h-[340px] flex justify-center items-center text-center'><OrbitProgress color="#282727" size="medium" text="" textColor="" /></p>}
         {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
         {loading || data && (
-          <div className="w-full h-80 flex flex-col justify-between items-center my-5">
+          <div className="w-full h-[340px] flex flex-col justify-between items-center my-5">
             <div className="flex flex-col items-center">
               <img
                 src={getWeatherIcon(data?.current?.temperature_2m)}
@@ -173,7 +197,7 @@ const App = () => {
               </div>
             </div>
 
-            <div className="h-24 text-center grid grid-cols-3 items-center gap-10 my-5 rounded-3xl p-3 bg-sky-50">
+            <div className="h-32 text-center grid grid-cols-3 items-center gap-10 mt-3 rounded-3xl p-3 bg-sky-50 dark:bg-gray-800">
               <div className='flex flex-col items-center'>
                 <p className='text-xs sm:text-sm font-bold'>Humidity</p>
                 <p className='text-sm'>{data?.current?.relative_humidity_2m}%</p>

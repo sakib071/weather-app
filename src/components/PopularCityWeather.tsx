@@ -56,11 +56,11 @@ export default function PopularCityWeather({ }: Props) {
 
 
   return (
-    <div>
+    <div className=''>
       <p className='text-lg font-semibold my-5'>Popular Cities</p>
       <div className='grid grid-cols-3 gap-3'>
         {popularData.map((city, index) => (
-          <div key={index} className="flex flex-col items-center p-5 rounded-3xl bg-sky-50">
+          <div key={index} className="flex flex-col items-center p-5 rounded-3xl bg-sky-50 dark:bg-gray-800">
             <p className="text-smfont-semibold">{city.name}</p>
             {/* <p className="text-sm">{today}</p> */}
             {/* <img src={CloudImage} alt="weather" className="mt-3 size-12" /> */}
