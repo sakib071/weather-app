@@ -22,7 +22,7 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <Provider store={store}> {/* Wrap Redux context here */}
+      <Provider store={store}>
         <RouterProvider router={router} />
       </Provider>
     </React.StrictMode>

@@ -94,7 +94,7 @@ const App = () => {
 
 
   // console.log("Weather loading:", loading);
-  console.log("Weather data:", data);
+  // console.log("Weather data:", data);
   // console.log("Weather error:", error);
 
   return (
