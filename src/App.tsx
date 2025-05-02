@@ -13,6 +13,8 @@ const App = () => {
   const { data, loading, error } = useAppSelector((state) => state?.weather);
   const [city, setCity] = useState('');
   const [cityName, setCityName] = useState<{ name: string; country: string }>({ name: '', country: '' });
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const rainNow = data?.hourly?.rain?.[data?.hourly?.time.indexOf(data?.current?.time)];
   const today = new Date().toLocaleDateString("en-US", {
     day: "numeric",
@@ -25,6 +27,12 @@ const App = () => {
     dispatch(fetchWeather({ lat: 22.3569, lon: 91.7832 }));
     setCityName({ name: 'Chittagong', country: 'Bangladesh' });
   }, [dispatch]);
+
+  useEffect(() => {
+    const history = JSON.parse(localStorage.getItem('weatherSearchHistory') || '[]');
+    setSearchHistory(history);
+  }, []);
+
 
   const getWeatherIcon = (temperature: number) => {
     if (temperature >= 30) return "/sun.png";          // Hot
@@ -45,6 +53,15 @@ const App = () => {
 
       if (result) {
         dispatch(fetchWeather({ lat: result.latitude, lon: result.longitude }));
+
+        // Update search history
+        const updatedHistory = [result.name, ...searchHistory.filter(name => name !== result.name)].slice(0, 5);
+        setSearchHistory(updatedHistory);
+        localStorage.setItem('weatherSearchHistory', JSON.stringify(updatedHistory));
+      }
+
+      if (result) {
+        dispatch(fetchWeather({ lat: result.latitude, lon: result.longitude }));
       } else {
         console.log("City not found.");
       }
@@ -61,18 +78,30 @@ const App = () => {
   return (
     <div className=''>
       <div className="px-8 py-6 inter-400">
-        <p className="text-xl font-semibold my-1">{cityName.name}, {cityName.country}</p>
+        <p className="text-xl font-semibold my-1">{`${cityName.name}, ${cityName.country}`}</p>
         <p className="text-base">{today}</p>
 
         <div className="relative my-5">
-          <input
+          {/* <input
             type="text"
             id="Search"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Search city"
             className="mt-0.5 px-3 w-full text-sm text-gray-600 border-gray-300 h-10 border-2 rounded-3xl shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900"
+          /> */}
+
+          <input
+            type="text"
+            id="Search"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setTimeout(() => setIsInputFocused(false), 100)} // delay to allow button click
+            placeholder="Search city"
+            className="mt-0.5 px-3 w-full text-sm text-gray-600 border-gray-300 h-10 border-2 rounded-3xl shadow-sm focus:border-gray-900 focus:outline-none focus:ring-gray-900"
           />
+
 
           <span className="absolute inset-y-0 right-2 grid w-8 place-content-center">
             <button
@@ -99,11 +128,32 @@ const App = () => {
           </span>
         </div>
 
-        {loading && <p className='w-full h-96 flex justify-center items-center text-center'><OrbitProgress color="#282727" size="medium" text="" textColor="" /></p>}
+        <div className='flex flex-col items-center'>
+          {isInputFocused && searchHistory.length > 0 && (
+            <div className="absolute z-10 bg-white border border-gray-200 rounded-xl shadow-md -mt-3  mx-auto w-full max-w-[340px]">
+              {searchHistory.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setCity(item);
+                    setIsInputFocused(false);
+                    handleSearch();
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-200 text-sm"
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+
+        {loading && <p className='w-full h-80 flex justify-center items-center text-center'><OrbitProgress color="#282727" size="medium" text="" textColor="" /></p>}
         {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
         {loading || data && (
-          <div className="w-full h-96 flex flex-col justify-between items-center my-5">
+          <div className="w-full h-80 flex flex-col justify-between items-center my-5">
             <div className="flex flex-col items-center">
               <img
                 src={getWeatherIcon(data?.current?.temperature_2m)}
