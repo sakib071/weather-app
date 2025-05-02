@@ -178,7 +178,7 @@ const App = () => {
 
         {loading || data && (
           <div className="w-full h-[340px] flex flex-col justify-between items-center my-5">
-            <div className="flex flex-col items-center">
+            <div className="w-full flex flex-col items-center">
               <img
                 src={getWeatherIcon(data?.current?.temperature_2m)}
                 alt="weather"
@@ -197,7 +197,7 @@ const App = () => {
               </div>
             </div>
 
-            <div className="h-32 text-center grid grid-cols-3 items-center gap-10 mt-3 rounded-3xl p-3 bg-sky-50 dark:bg-gray-800">
+            <div className="w-full h-32 text-center grid grid-cols-3 items-center gap-10 mt-3 rounded-3xl p-3 bg-sky-50 dark:bg-gray-800">
               <div className='flex flex-col items-center'>
                 <p className='text-xs sm:text-sm font-bold'>Humidity</p>
                 <p className='text-sm'>{data?.current?.relative_humidity_2m}%</p>
