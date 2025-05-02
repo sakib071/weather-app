@@ -16,14 +16,12 @@ const initialState: WeatherState = {
 export const fetchWeather = createAsyncThunk(
   'weather/fetchWeather',
   async ({ lat, lon }: { lat: number; lon: number }) => {
-    const API_KEY = `c98d53c6917a4fdd8f899a3ba3d34393`;
-    const response = await axios.get(
-      // `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
-      `https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid=${API_KEY}`
-    );
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset&hourly=temperature_2m,relative_humidity_2m,rain&current=temperature_2m,wind_speed_10m&timezone=Asia%2FSingapore`;
+    const response = await axios.get(url);
     return response.data;
   }
 );
+
 
 const weatherSlice = createSlice({
   name: 'weather',
